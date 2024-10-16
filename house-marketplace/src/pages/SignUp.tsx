@@ -55,6 +55,7 @@ function SignUp() {
 
       navigate("/");
     } catch (error) {
+      console.log(error);
       console.log(toast.error("Something went wrong with registration :("));
     }
   };
@@ -92,13 +93,10 @@ function SignUp() {
               src={visibilityIcon}
               alt="show"
               className="showPassword"
-              style={{ width: "100px", height: "100px" }}
+              style={{ width: "15px", height: "15px" }}
               onClick={() => setShowPassword((prevState) => !prevState)}
             />
           </div>
-          <Link to="forgot-password" className="forgotPasswordLink">
-            Forgot Password
-          </Link>
           <div className="signUpBar">
             <p className="signUpText">Sign up</p>
             <button className="signInButton">

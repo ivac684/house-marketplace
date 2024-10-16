@@ -34,7 +34,7 @@ function SignIn() {
         password
       );
       if (userCredential.user) {
-        navigate("/profile");
+        navigate("/");
       }
     } catch (error) {
       toast.error("Bad user credentials :(");
@@ -66,12 +66,12 @@ function SignIn() {
               src={visibilityIcon}
               alt="show"
               className="showPassword"
-              style={{ width: "100px", height: "100px" }}
+              style={{ width: "50px", height: "50px" }}
               onClick={() => setShowPassword((prevState) => !prevState)}
             ></img>
           </div>
-          <Link to="forgot-password" className="forgotPasswordLink">
-            Forgot Password
+          <Link to="/forgot-password" className="forgotPasswordLink">
+            Forgot password
           </Link>
           <div className="signInBar">
             <p className="signInText">Sign in</p>
