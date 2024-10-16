@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import ArrowRightIcon from "../assets/svg/keyboardArrowRightIcon.svg";
-import visibilityIcon from "../assets/svg/visibilityIcon.svg";
+import VisibilityIcon from "../assets/svg/visibilityIcon.svg";
 //import firebase from "firebase/compat/app";
 import { toast } from "react-toastify";
 
@@ -62,13 +62,12 @@ function SignIn() {
               value={password}
               onChange={onChange}
             />
-            <img
-              src={visibilityIcon}
-              alt="show"
+            <div
               className="showPassword"
-              style={{ width: "50px", height: "50px" }}
               onClick={() => setShowPassword((prevState) => !prevState)}
-            ></img>
+            >
+              <VisibilityIcon />
+            </div>
           </div>
           <Link to="/forgot-password" className="forgotPasswordLink">
             Forgot password

@@ -6,7 +6,7 @@ import { auth } from "../firebase.config";
 import { db } from "../firebase.config";
 import { setDoc, doc, serverTimestamp, FieldValue } from "firebase/firestore";
 import ArrowRightIcon from "../assets/svg/keyboardArrowRightIcon.svg";
-import visibilityIcon from "../assets/svg/visibilityIcon.svg";
+import VisibilityIcon from "../assets/svg/visibilityIcon.svg";
 
 interface FormData {
   name: string;
@@ -89,13 +89,12 @@ function SignUp() {
               value={password}
               onChange={onChange}
             />
-            <img
-              src={visibilityIcon}
-              alt="show"
+            <div
               className="showPassword"
-              style={{ width: "15px", height: "15px" }}
               onClick={() => setShowPassword((prevState) => !prevState)}
-            />
+            >
+              <VisibilityIcon />
+            </div>
           </div>
           <div className="signUpBar">
             <p className="signUpText">Sign up</p>
