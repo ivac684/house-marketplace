@@ -1,9 +1,11 @@
 import { getAuth, updateProfile } from "firebase/auth";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { db } from "../firebase.config";
 import { updateDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
+import ArrowRight from "../assets/svg/keyboardArrowRightIcon.svg";
+import HomeIcon from "../assets/svg/homeIcon.svg";
 
 function Profile() {
   const auth = getAuth();
@@ -84,6 +86,11 @@ function Profile() {
             />
           </form>
         </div>
+        <Link to="/create-listing" className="createListing">
+          <HomeIcon />
+          <p>Sell or rent your home</p>
+          <ArrowRight />
+        </Link>
       </main>
     </div>
   );
