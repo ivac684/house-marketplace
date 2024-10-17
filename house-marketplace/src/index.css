@@ -134,9 +134,14 @@ button {
   }
 }
 
+.alignLeftCategory {
+  text-align: left;
+}
+
 .pageHeader {
   font-size: 2rem;
   font-weight: 800;
+  text-align: left;
 }
 
 .navbar {
@@ -418,10 +423,10 @@ button {
   border-radius: 1.5rem;
   object-fit: cover;
 }
-@media (min-width: 1024px) {
+@media (max-width: 1024px) {
   .categoryListingImg {
-    width: 19%;
-    height: 217px;
+    width: 24%;
+    height: 100px;
   }
 }
 

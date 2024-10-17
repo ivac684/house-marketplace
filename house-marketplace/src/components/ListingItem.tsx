@@ -23,8 +23,10 @@ function ListingItem({ listing, id }: ListingItemProps) {
             className="categoryListingImg"
           ></img>
           <div className="categoryListingDetails">
-            <p className="categoryListingLocation">{listing.location}</p>
-            <p className="categoryListingName">{listing.name}</p>
+            <div className="alignLeftCategory">
+              <p className="categoryListingLocation">{listing.location}</p>
+              <p className="categoryListingName">{listing.name}</p>
+            </div>
             <p className="categoryListingPrice">
               $
               {listing.offer

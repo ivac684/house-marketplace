@@ -18,7 +18,7 @@ function NavBar() {
           <li className="navbarListItem" onClick={() => navigate("/offers")}>
             <OfferIcon />
 
-            <p>Offer</p>
+            <p>Offers</p>
           </li>
           <li className="navbarListItem" onClick={() => navigate("/profile")}>
             <PersonOutlineIcon />
