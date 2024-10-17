@@ -7,6 +7,7 @@ import { db } from "../firebase.config";
 import { setDoc, doc, serverTimestamp, FieldValue } from "firebase/firestore";
 import ArrowRightIcon from "../assets/svg/keyboardArrowRightIcon.svg";
 import VisibilityIcon from "../assets/svg/visibilityIcon.svg";
+import OAuth from "../components/OAuth";
 
 interface FormData {
   name: string;
@@ -103,6 +104,7 @@ function SignUp() {
             </button>
           </div>
         </form>
+        <OAuth />
         <Link to="/sign-in" className="registerLink">
           Sign In Instead
         </Link>
