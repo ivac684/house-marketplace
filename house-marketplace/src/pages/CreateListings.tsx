@@ -240,7 +240,7 @@ function CreateListings() {
               type="button"
               className={type === "rent" ? "formButtonActive" : "formButton"}
               id="type"
-              value="sale"
+              value="rent"
               onClick={onMutate}
             >
               Rent
@@ -289,7 +289,7 @@ function CreateListings() {
               className={parking ? "formButtonActive" : "formButton"}
               type="button"
               id="parking"
-              value={true}
+              value={true.toString()}
               onClick={onMutate}
               min="1"
               max="50"
@@ -302,7 +302,7 @@ function CreateListings() {
               }
               type="button"
               id="parking"
-              value={false}
+              value={false.toString()}
               onClick={onMutate}
             >
               No
@@ -313,7 +313,7 @@ function CreateListings() {
             <button
               type="button"
               id="furnished"
-              value={true}
+              value={true.toString()}
               className={furnished ? "formButtonActive" : "formButton"}
               onClick={onMutate}
             >
@@ -322,7 +322,7 @@ function CreateListings() {
             <button
               type="button"
               id="furnished"
-              value={false}
+              value={false.toString()}
               className={
                 !furnished && furnished != null
                   ? "formButtonActive"
@@ -376,7 +376,7 @@ function CreateListings() {
               className={offer ? "formButtonActive" : "formButton"}
               type="button"
               id="offer"
-              value={true}
+              value={true.toString()}
               onClick={onMutate}
             >
               Yes
@@ -387,7 +387,7 @@ function CreateListings() {
               }
               type="button"
               id="offer"
-              value={true}
+              value={false.toString()}
               onClick={onMutate}
             >
               No
