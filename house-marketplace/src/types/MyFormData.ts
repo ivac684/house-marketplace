@@ -1,16 +1,20 @@
-export default interface FormData {
-  type: string;
+export default interface Geolocation {
+  lat: number;
+  lng: number;
+}
+
+export default interface MyFormData {
   name: string;
+  address: string;
+  type: "rent" | "sale";
   bedrooms: number;
   bathrooms: number;
   parking: boolean;
   furnished: boolean;
-  address: string;
   offer: boolean;
   regularPrice: number;
   discountedPrice: number;
-  images: File[];
-  latitude: number;
-  longitude: number;
+  geolocation: Geolocation;
+  imgUrls: string[];
   userRef: string;
 }
