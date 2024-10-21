@@ -5,13 +5,11 @@ import { getAuth } from "firebase/auth";
 import { db } from "../firebase.config";
 import Spinner from "../components/Spinner";
 import ShareIcon from "../assets/svg/shareIcon.svg";
-
-interface ListingData {
-  name: string;
-}
+import MyFormData from "../types/MyFormData";
+import { list } from "firebase/storage";
 
 function Listing() {
-  const [listing, setListing] = useState<ListingData | null>(null);
+  const [listing, setListing] = useState<MyFormData | null>(null);
   const [loading, setLoading] = useState(true);
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
 
@@ -30,7 +28,7 @@ function Listing() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         console.log("lala", docSnap.data());
-        setListing(docSnap.data() as ListingData);
+        setListing(docSnap.data() as MyFormData);
         setLoading(false);
       }
     };
@@ -42,7 +40,62 @@ function Listing() {
     return <Spinner />;
   }
 
-  return <div>hello</div>;
+  return (
+    <main>
+      <div
+        className="shareIconDiv"
+        onClick={() => {
+          navigator.clipboard.writeText(window.location.href);
+          setShareLinkCopied(true);
+          setTimeout(() => {
+            setShareLinkCopied(false);
+          }, 2000);
+        }}
+      >
+        <ShareIcon />
+      </div>
+      {shareLinkCopied && <p className="linkCopied">Link copied </p>}
+      <div className="listingDetails">
+        <p className="listingName">
+          {listing?.name} - $
+          {listing?.offer ? listing?.discountedPrice : listing?.regularPrice}
+        </p>
+        <p className="listingLocation">{listing?.address}</p>
+        <p className="listingType">
+          For {listing?.type === "rent" ? "Rent" : "Sale"}
+        </p>
+        {listing?.offer && (
+          <p className="discountPrice">
+            ${listing?.regularPrice - listing?.discountedPrice} discount
+          </p>
+        )}
+        <ul className="listingDetailsList">
+          <li>
+            {listing?.bedrooms > 1
+              ? `${listing?.bedrooms} Bedrooms`
+              : "1 Bedroom"}
+          </li>
+          <li>
+            {listing?.bathrooms > 1
+              ? `${listing?.bathrooms} Bathrooms`
+              : "1 Bathroom"}
+          </li>
+          <li>{listing?.parking ? "Parking spot" : "No parking"}</li>
+          <li>{listing?.furnished ? "Furnished" : "Not furnished"}</li>
+        </ul>
+        <p className="listingLocationTitle">Location</p>
+
+        {auth.currentUser?.uid !== listing?.userRef && (
+          <Link
+            to={`/contact/${listing?.userRef}?listingName=${listing?.name}`}
+            className="primaryButton"
+          >
+            Contact Landlord
+          </Link>
+        )}
+      </div>
+    </main>
+  );
 }
 
 export default Listing;

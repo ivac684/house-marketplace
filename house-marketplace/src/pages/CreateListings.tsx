@@ -14,33 +14,17 @@ import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import { snapshot } from "node:test";
 import { error } from "node:console";
+import MyFormData from "../types/MyFormData";
 
 interface Geolocation {
   lat?: number;
   lng?: number;
 }
 
-interface FormData {
-  type: string;
-  name: string;
-  bedrooms: number;
-  bathrooms: number;
-  parking: boolean;
-  furnished: boolean;
-  address: string;
-  offer: boolean;
-  regularPrice: number;
-  discountedPrice: number;
-  images: File[];
-  latitude: number;
-  longitude: number;
-  userRef: string;
-}
-
 function CreateListings() {
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<MyFormData>({
     type: "rent",
     name: "",
     bedrooms: 1,
