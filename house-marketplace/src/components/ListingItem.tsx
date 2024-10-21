@@ -10,6 +10,9 @@ interface ListingItemProps {
 }
 
 function ListingItem({ listing, id }: ListingItemProps) {
+  console.log("bggg", listing);
+  console.log(listing?.imgUrls?.length);
+
   return (
     <div>
       <li className="categoryListing">
@@ -18,7 +21,7 @@ function ListingItem({ listing, id }: ListingItemProps) {
           className="categoryListingLink"
         >
           <img
-            src={listing.imageUrls[0]}
+            src={listing.imgUrls?.[0]}
             alt={listing.name}
             className="categoryListingImg"
           ></img>
