@@ -14,6 +14,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import CreateListings from "./pages/CreateListings";
 import Listing from "./pages/Listing";
 import Contact from "./pages/Contact";
+import EditListing from "./pages/EditListing";
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/offers" element={<Offers />} />
           <Route path="/create-listing" element={<CreateListings />} />
-          <Route path="/category/:categoryName" element={<Category />} />
+          <Route path="/edit-listing/:listingId" element={<EditListing />} />
+          <Route path="/category/:categoryName/id?" element={<Category />} />
           <Route path="/contact/:landlordId" element={<Contact />} />
           <Route
             path="/category/:categoryName/:listingId"

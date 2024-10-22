@@ -3,7 +3,6 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import ArrowRightIcon from "../assets/svg/keyboardArrowRightIcon.svg";
 import VisibilityIcon from "../assets/svg/visibilityIcon.svg";
-//import firebase from "firebase/compat/app";
 import { toast } from "react-toastify";
 import OAuth from "../components/OAuth";
 

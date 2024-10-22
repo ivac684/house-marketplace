@@ -7,13 +7,12 @@ import {
   where,
   orderBy,
   limit,
-  DocumentData,
 } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
-import MyFormData from "../types/MyFormData";
+import { MyFormData } from "../types/MyFormData";
 
 function Category() {
   const [listings, setListings] = useState<MyFormData[]>([]);
@@ -31,20 +30,23 @@ function Category() {
           limit(10)
         );
         const querySnap = await getDocs(q);
+
         const listings: MyFormData[] = [];
         querySnap.forEach((doc) => {
           const data = doc.data() as MyFormData;
-          listings.push(data);
+          listings.push({ ...data, id: doc.id });
         });
 
-        console.log("aaaaaaaaaaaaaaa", listings);
+        console.log("Fetched Listings:", listings);
         setListings(listings);
         setLoading(false);
       } catch (error) {
+        console.error("Error fetching listings:", error);
         toast.error("Could not fetch listings");
         setLoading(false);
       }
     };
+
     fetchListings();
   }, [params.categoryName]);
 
@@ -63,7 +65,7 @@ function Category() {
         <main>
           <ul className="categoryListings">
             {listings.map((listing) => (
-              <ListingItem listing={listing} id={listing.id} key={listing.id} />
+              <ListingItem key={listing.id} listing={listing} id={listing.id} />
             ))}
           </ul>
         </main>

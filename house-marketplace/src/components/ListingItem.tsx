@@ -1,17 +1,18 @@
 import { Link } from "react-router-dom";
 import DeleteIcon from "../assets/svg/deleteIcon.svg";
+import EditIcon from "../assets/svg/editIcon.svg";
 import BedIcon from "../assets/svg/bedIcon.svg";
 import BathtubIcon from "../assets/svg/bathtubIcon.svg";
-import { DocumentData } from "firebase/firestore";
-import MyFormData from "../types/MyFormData";
+import { MyFormData } from "../types/MyFormData";
 
 interface ListingItemProps {
   listing: MyFormData;
   id: string;
   onDelete?: (id: string) => void;
+  onEdit?: (id: string) => void;
 }
 
-function ListingItem({ listing, id, onDelete }: ListingItemProps) {
+function ListingItem({ listing, id, onDelete, onEdit }: ListingItemProps) {
   return (
     <div>
       <li className="categoryListing">
@@ -59,6 +60,17 @@ function ListingItem({ listing, id, onDelete }: ListingItemProps) {
         {onDelete && (
           <div className="removeIcon" onClick={() => onDelete(listing.id)}>
             <DeleteIcon />
+          </div>
+        )}
+        {onEdit && (
+          <div
+            className="editIcon"
+            onClick={(e) => {
+              e.preventDefault();
+              onEdit(listing.id);
+            }}
+          >
+            <EditIcon />
           </div>
         )}
       </li>

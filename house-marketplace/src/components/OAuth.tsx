@@ -4,7 +4,6 @@ import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { toast } from "react-toastify";
 import GoogleIcon from "../assets/svg/googleIcon.svg";
-import { EmailAuthCredential } from "firebase/auth/web-extension";
 
 function OAuth() {
   const navigate = useNavigate();
@@ -15,11 +14,9 @@ function OAuth() {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      //check for user
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
-        //if user doenst exist create user
         await setDoc(doc(db, "users", user.uid), {
           name: user.displayName,
           email: user.email,

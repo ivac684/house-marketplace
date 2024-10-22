@@ -15,7 +15,7 @@ import {
 import { toast } from "react-toastify";
 import ArrowRight from "../assets/svg/keyboardArrowRightIcon.svg";
 import HomeIcon from "../assets/svg/homeIcon.svg";
-import MyFormData from "../types/MyFormData";
+import { MyFormData } from "../types/MyFormData";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
 
@@ -98,6 +98,8 @@ function Profile() {
     }
   };
 
+  const onEdit = (listingId: string) => navigate(`/edit-listing/${listingId}`);
+
   if (loading) {
     return <Spinner />;
   }
@@ -143,16 +145,22 @@ function Profile() {
           <ArrowRight />
         </Link>
       </main>
-      {!loading && listings?.length > 0 && (
+      {!loading && listings.length > 0 && (
         <>
           <p className="listingText">Your listings</p>
           <ul className="listingsList">
             {listings.map((listing) => (
-              <ListingItem
-                listing={listing}
-                id={listing.name}
-                onDelete={onDelete}
-              />
+              <Link
+                key={listing.id}
+                to={`/category/${listing.type}/${listing.id}`}
+              >
+                <ListingItem
+                  listing={listing}
+                  id={listing.id}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                />
+              </Link>
             ))}
           </ul>
         </>

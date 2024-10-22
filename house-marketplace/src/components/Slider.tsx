@@ -5,7 +5,7 @@ import { db } from "../firebase.config";
 import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Spinner from "./Spinner";
-import MyFormData from "../types/MyFormData";
+import { MyFormData } from "../types/MyFormData";
 
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 

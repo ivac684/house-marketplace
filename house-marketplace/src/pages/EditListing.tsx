@@ -6,27 +6,36 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
-import { createDefaultFormData, MyFormData } from "../types/MyFormData";
+import { MyFormData, createDefaultFormData } from "../types/MyFormData";
 
 interface Geolocation {
   lat?: number;
   lng?: number;
 }
 
-function CreateListings() {
+function EditListing() {
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [listing, setListing] = useState<MyFormData | null>(null);
   const [formData, setFormData] = useState<MyFormData>(createDefaultFormData());
-
   const auth = getAuth();
   const navigate = useNavigate();
   const isMounted = useRef(true);
+
+  const params = useParams();
+
+  useEffect(() => {
+    if (listing && listing.userRef !== auth.currentUser?.uid) {
+      toast.error("You can not edit this listing");
+      navigate("/");
+    }
+  });
 
   useEffect(() => {
     if (isMounted) {
@@ -84,7 +93,6 @@ function CreateListings() {
         location = formData.address;
       }
     }
-
     const storeImage = async (image: File) => {
       return new Promise((resolve, reject) => {
         const storage = getStorage();
@@ -116,6 +124,28 @@ function CreateListings() {
       });
     };
 
+    useEffect(() => {
+      setLoading(true);
+      const fetchListing = async () => {
+        if (!params.listingId) {
+          return;
+        }
+        const docRef = doc(db, "listings", params.listingId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setListing(docSnap.data() as MyFormData);
+          setFormData({
+            ...(docSnap.data() as MyFormData),
+            address: docSnap.data().location,
+          });
+          setLoading(false);
+        } else {
+          toast.error("Could not get listing data");
+        }
+      };
+      fetchListing();
+    }, [params.listingId, navigate]);
+
     const imgUrls = await Promise.all(
       [...formData.imgUrls].map((image) => storeImage(image))
     ).catch(() => {
@@ -123,9 +153,7 @@ function CreateListings() {
       toast.error("Image is not uploaded :(");
       return;
     });
-
     const {
-      id: string,
       imgUrls: File,
       address,
       ...formDataCopy
@@ -135,27 +163,26 @@ function CreateListings() {
       geolocation,
       timestamp: serverTimestamp(),
     };
-    console.log(formData, formDataCopy);
-    const docRef = await addDoc(collection(db, "listings"), {
-      ...formDataCopy,
-      imgUrls,
-    });
-
+    if (!params.listingId) {
+      return;
+    }
+    const docRef = doc(db, "listings", params.listingId);
+    await updateDoc(docRef, formDataCopy);
     setLoading(false);
     toast.success("Listing saved :)");
-    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
+    navigate(`category/${formDataCopy.type}/${docRef.id}`);
   };
 
   const onMutate = (
-    e:
-      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | React.MouseEvent<HTMLButtonElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement
+    >
   ) => {
     let boolean = null;
-    if ((e.target as HTMLInputElement).value === "true") {
+    if (e.target.value === "true") {
       boolean = true;
     }
-    if ((e.target as HTMLInputElement).value === "false") {
+    if (e.target.value === "false") {
       boolean = false;
     }
     const target = e.target as HTMLInputElement;
@@ -163,14 +190,13 @@ function CreateListings() {
     if (files) {
       setFormData((prevState) => ({
         ...prevState,
-        imgUrls: Array.from(files),
+        images: Array.from(files),
       }));
     }
     if (!files) {
       setFormData((prevState) => ({
         ...prevState,
-        [(e.target as HTMLInputElement).id]:
-          boolean ?? (e.target as HTMLInputElement).value,
+        [e.target.id]: boolean ?? e.target.value,
       }));
     }
   };
@@ -181,7 +207,7 @@ function CreateListings() {
   return (
     <div className="profile">
       <header>
-        <p className="pageHeader">Create a Listing</p>
+        <p className="pageHeader">Edit a Listing</p>
       </header>
       <main>
         <form onSubmit={onSubmit}>
@@ -194,7 +220,7 @@ function CreateListings() {
               }
               id="type"
               value="sale"
-              onClick={onMutate}
+              onChange={onMutate}
             >
               Sell
             </button>
@@ -205,7 +231,7 @@ function CreateListings() {
               }
               id="type"
               value="rent"
-              onClick={onMutate}
+              onChange={onMutate}
             >
               Rent
             </button>
@@ -255,6 +281,8 @@ function CreateListings() {
               id="parking"
               value={true.toString()}
               onClick={onMutate}
+              min="1"
+              max="50"
             >
               Yes
             </button>
@@ -300,6 +328,7 @@ function CreateListings() {
           <label className="formLabel">Address</label>
           <textarea
             className="formInputAddress"
+            type="text"
             id="address"
             value={formData.address}
             onChange={onMutate}
@@ -404,7 +433,7 @@ function CreateListings() {
             required
           />
           <button type="submit" className="primaryButton createListingButton">
-            Create Listing
+            Edit Listing
           </button>
         </form>
       </main>
@@ -412,4 +441,4 @@ function CreateListings() {
   );
 }
 
-export default CreateListings;
+export default EditListing;
