@@ -3,9 +3,10 @@ import DeleteIcon from "../assets/svg/deleteIcon.svg";
 import BedIcon from "../assets/svg/bedIcon.svg";
 import BathtubIcon from "../assets/svg/bathtubIcon.svg";
 import { DocumentData } from "firebase/firestore";
+import MyFormData from "../types/MyFormData";
 
 interface ListingItemProps {
-  listing: DocumentData;
+  listing: MyFormData;
   id: string;
 }
 
@@ -24,7 +25,7 @@ function ListingItem({ listing, id }: ListingItemProps) {
           ></img>
           <div className="categoryListingDetails">
             <div className="alignLeftCategory">
-              <p className="categoryListingLocation">{listing.location}</p>
+              <p className="categoryListingLocation">{listing.address}</p>
               <p className="categoryListingName">{listing.name}</p>
             </div>
             <p className="categoryListingPrice">

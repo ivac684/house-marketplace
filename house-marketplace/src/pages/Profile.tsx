@@ -1,15 +1,29 @@
 import { getAuth, updateProfile } from "firebase/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { db } from "../firebase.config";
-import { updateDoc, doc } from "firebase/firestore";
+import {
+  updateDoc,
+  doc,
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  deleteDoc,
+} from "firebase/firestore";
 import { toast } from "react-toastify";
 import ArrowRight from "../assets/svg/keyboardArrowRightIcon.svg";
 import HomeIcon from "../assets/svg/homeIcon.svg";
+import MyFormData from "../types/MyFormData";
+import Spinner from "../components/Spinner";
+import ListingItem from "../components/ListingItem";
 
 function Profile() {
   const auth = getAuth();
   const [changeDetails, setChangeDetails] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [listings, setListings] = useState<MyFormData[]>([]);
   const [formData, setFormData] = useState({
     name: auth.currentUser?.displayName || "",
     email: auth.currentUser?.email || "",
@@ -18,6 +32,27 @@ function Profile() {
   const { name } = formData;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserListings = async () => {
+      const listingsRef = collection(db, "listings");
+      const q = query(
+        listingsRef,
+        where("userRef", "==", auth.currentUser?.uid),
+        orderBy("timestamp", "desc")
+      );
+      const querySnap = await getDocs(q);
+
+      const listings: MyFormData[] = [];
+      querySnap.forEach((doc) => {
+        const data = doc.data() as MyFormData;
+        listings.push(data);
+      });
+      setLoading(false);
+      setListings(listings);
+    };
+    fetchUserListings();
+  }, [auth.currentUser?.uid]);
 
   const onLogout = () => {
     auth.signOut();
@@ -50,6 +85,10 @@ function Profile() {
       [e.target.id]: e.target.value,
     }));
   };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="profile">
@@ -92,6 +131,16 @@ function Profile() {
           <ArrowRight />
         </Link>
       </main>
+      {!loading && listings?.length > 0 && (
+        <>
+          <p className="listingText">Your listings</p>
+          <ul className="listingsList">
+            {listings.map((listing) => (
+              <ListingItem listing={listing} id={listing.name} />
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 }
