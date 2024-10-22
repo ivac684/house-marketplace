@@ -4,6 +4,7 @@ export default interface Geolocation {
 }
 
 export default interface MyFormData {
+  id: string;
   name: string;
   address: string;
   type: "rent" | "sale";
@@ -14,7 +15,7 @@ export default interface MyFormData {
   offer: boolean;
   regularPrice: number;
   discountedPrice: number;
-  geolocation: Geolocation;
+  geolocation?: Geolocation;
   imgUrls: string[];
   userRef: string;
 }

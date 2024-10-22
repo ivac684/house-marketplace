@@ -8,9 +8,10 @@ import MyFormData from "../types/MyFormData";
 interface ListingItemProps {
   listing: MyFormData;
   id: string;
+  onDelete?: (id: string) => void;
 }
 
-function ListingItem({ listing, id }: ListingItemProps) {
+function ListingItem({ listing, id, onDelete }: ListingItemProps) {
   return (
     <div>
       <li className="categoryListing">
@@ -55,14 +56,11 @@ function ListingItem({ listing, id }: ListingItemProps) {
             </div>
           </div>
         </Link>
-        {/* {onDelete && (
-          <div
-            className="removeIcon"
-            onClick={() => onDelete(listing.id, listing.name)}
-          >
+        {onDelete && (
+          <div className="removeIcon" onClick={() => onDelete(listing.id)}>
             <DeleteIcon />
           </div>
-        )} */}
+        )}
       </li>
     </div>
   );

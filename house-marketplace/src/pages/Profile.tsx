@@ -46,7 +46,7 @@ function Profile() {
       const listings: MyFormData[] = [];
       querySnap.forEach((doc) => {
         const data = doc.data() as MyFormData;
-        listings.push(data);
+        listings.push({ ...data, id: doc.id });
       });
       setLoading(false);
       setListings(listings);
@@ -84,6 +84,18 @@ function Profile() {
       ...prevState,
       [e.target.id]: e.target.value,
     }));
+  };
+
+  const onDelete = async (listingId: string) => {
+    if (window.confirm("Are you sure you want to delete this listing?")) {
+      console.log("listingid", listingId);
+      await deleteDoc(doc(db, "listings", listingId));
+      const updatedListings = listings.filter(
+        (listing) => listing.id != listingId
+      );
+      setListings(updatedListings);
+      toast.success("Success");
+    }
   };
 
   if (loading) {
@@ -136,7 +148,11 @@ function Profile() {
           <p className="listingText">Your listings</p>
           <ul className="listingsList">
             {listings.map((listing) => (
-              <ListingItem listing={listing} id={listing.name} />
+              <ListingItem
+                listing={listing}
+                id={listing.name}
+                onDelete={onDelete}
+              />
             ))}
           </ul>
         </>

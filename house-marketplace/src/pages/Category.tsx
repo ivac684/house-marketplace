@@ -13,14 +13,10 @@ import { db } from "../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
-
-interface Listing {
-  id: string;
-  data: DocumentData;
-}
+import MyFormData from "../types/MyFormData";
 
 function Category() {
-  const [listings, setListings] = useState<Listing[]>([]);
+  const [listings, setListings] = useState<MyFormData[]>([]);
   const [loading, setLoading] = useState(true);
   const params = useParams();
 
@@ -35,13 +31,13 @@ function Category() {
           limit(10)
         );
         const querySnap = await getDocs(q);
-        const listings: Listing[] = [];
+        const listings: MyFormData[] = [];
         querySnap.forEach((doc) => {
-          listings.push({
-            id: doc.id,
-            data: doc.data(),
-          });
+          const data = doc.data() as MyFormData;
+          listings.push(data);
         });
+
+        console.log("aaaaaaaaaaaaaaa", listings);
         setListings(listings);
         setLoading(false);
       } catch (error) {
@@ -67,11 +63,7 @@ function Category() {
         <main>
           <ul className="categoryListings">
             {listings.map((listing) => (
-              <ListingItem
-                listing={listing.data}
-                id={listing.id}
-                key={listing.id}
-              />
+              <ListingItem listing={listing} id={listing.id} key={listing.id} />
             ))}
           </ul>
         </main>
