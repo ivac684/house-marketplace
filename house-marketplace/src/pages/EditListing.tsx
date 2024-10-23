@@ -24,6 +24,7 @@ function EditListing() {
   const [loading, setLoading] = useState(false);
   const [listing, setListing] = useState<MyFormData | null>(null);
   const [formData, setFormData] = useState<MyFormData>(createDefaultFormData());
+
   const auth = getAuth();
   const navigate = useNavigate();
   const isMounted = useRef(true);
@@ -174,15 +175,15 @@ function EditListing() {
   };
 
   const onMutate = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement
-    >
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | React.MouseEvent<HTMLButtonElement>
   ) => {
     let boolean = null;
-    if (e.target.value === "true") {
+    if ((e.target as HTMLInputElement).value === "true") {
       boolean = true;
     }
-    if (e.target.value === "false") {
+    if ((e.target as HTMLInputElement).value === "false") {
       boolean = false;
     }
     const target = e.target as HTMLInputElement;
@@ -190,17 +191,17 @@ function EditListing() {
     if (files) {
       setFormData((prevState) => ({
         ...prevState,
-        images: Array.from(files),
+        imgUrls: Array.from(files),
       }));
     }
     if (!files) {
       setFormData((prevState) => ({
         ...prevState,
-        [e.target.id]: boolean ?? e.target.value,
+        [(e.target as HTMLInputElement).id]:
+          boolean ?? (e.target as HTMLInputElement).value,
       }));
     }
   };
-
   if (loading) {
     return <Spinner />;
   }
@@ -220,7 +221,7 @@ function EditListing() {
               }
               id="type"
               value="sale"
-              onChange={onMutate}
+              onClick={onMutate}
             >
               Sell
             </button>
@@ -231,7 +232,7 @@ function EditListing() {
               }
               id="type"
               value="rent"
-              onChange={onMutate}
+              onClick={onMutate}
             >
               Rent
             </button>
@@ -281,8 +282,6 @@ function EditListing() {
               id="parking"
               value={true.toString()}
               onClick={onMutate}
-              min="1"
-              max="50"
             >
               Yes
             </button>
@@ -328,7 +327,6 @@ function EditListing() {
           <label className="formLabel">Address</label>
           <textarea
             className="formInputAddress"
-            type="text"
             id="address"
             value={formData.address}
             onChange={onMutate}
