@@ -28,15 +28,7 @@ function EditListing() {
   const auth = getAuth();
   const navigate = useNavigate();
   const isMounted = useRef(true);
-
   const params = useParams();
-
-  useEffect(() => {
-    if (listing && listing.userRef !== auth.currentUser?.uid) {
-      toast.error("You can not edit this listing");
-      navigate("/");
-    }
-  });
 
   useEffect(() => {
     if (isMounted) {
@@ -52,6 +44,28 @@ function EditListing() {
       isMounted.current = false;
     };
   }, [isMounted]);
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      if (!params.listingId) return;
+
+      const docRef = doc(db, "listings", params.listingId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const listingData = docSnap.data() as MyFormData;
+        setListing(listingData);
+        setFormData({
+          ...listingData,
+        });
+      } else {
+        toast.error("Could not get listing data");
+        navigate("/");
+      }
+      setLoading(false);
+    };
+
+    fetchListing();
+  }, [params.listingId]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -94,69 +108,41 @@ function EditListing() {
         location = formData.address;
       }
     }
-    const storeImage = async (image: File) => {
-      return new Promise((resolve, reject) => {
-        const storage = getStorage();
-        const fileName = `${auth.currentUser?.uid}-${image.name}-${uuidv4()}`;
-        const storageRef = ref(storage, "images/" + fileName);
-        const uploadTask = uploadBytesResumable(storageRef, image);
+    const storeImage = async (image: File): Promise<string> => {
+      const storage = getStorage();
+      const fileName = `${auth.currentUser?.uid}-${image.name}-${uuidv4()}`;
+      const storageRef = ref(storage, `images/${fileName}`);
 
+      const uploadTask = uploadBytesResumable(storageRef, image);
+
+      return new Promise((resolve, reject) => {
         uploadTask.on(
           "state_changed",
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            switch (snapshot.state) {
-              case "paused":
-                break;
-              case "running":
-                break;
-            }
-          },
+          null,
           (error) => {
             reject(error);
           },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               resolve(downloadURL);
-            });
+            } catch (error) {
+              reject(error);
+            }
           }
         );
       });
     };
 
-    useEffect(() => {
-      setLoading(true);
-      const fetchListing = async () => {
-        if (!params.listingId) {
-          return;
-        }
-        const docRef = doc(db, "listings", params.listingId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setListing(docSnap.data() as MyFormData);
-          setFormData({
-            ...(docSnap.data() as MyFormData),
-            address: docSnap.data().location,
-          });
-          setLoading(false);
-        } else {
-          toast.error("Could not get listing data");
-        }
-      };
-      fetchListing();
-    }, [params.listingId, navigate]);
-
     const imgUrls = await Promise.all(
       [...formData.imgUrls].map((image) => storeImage(image))
     ).catch(() => {
       setLoading(false);
-      toast.error("Image is not uploaded :(");
       return;
     });
     const {
+      id: string,
       imgUrls: File,
-      address,
       ...formDataCopy
     } = {
       ...formData,
@@ -171,7 +157,7 @@ function EditListing() {
     await updateDoc(docRef, formDataCopy);
     setLoading(false);
     toast.success("Listing saved :)");
-    navigate(`category/${formDataCopy.type}/${docRef.id}`);
+    navigate("/profile");
   };
 
   const onMutate = (
@@ -244,7 +230,6 @@ function EditListing() {
             value={formData.name}
             className="formInputName"
             onChange={onMutate}
-            required
           />
           <div className="formRooms flex">
             <div>
@@ -257,7 +242,6 @@ function EditListing() {
                 onChange={onMutate}
                 min="1"
                 max="50"
-                required
               />
             </div>
             <div>
@@ -270,7 +254,6 @@ function EditListing() {
                 min="1"
                 max="50"
                 onChange={onMutate}
-                required
               />
             </div>
           </div>
@@ -354,7 +337,6 @@ function EditListing() {
                     id="longitude"
                     value={formData.geolocation?.lng}
                     onChange={onMutate}
-                    required
                   />
                 </div>
               </div>
@@ -395,7 +377,6 @@ function EditListing() {
               onChange={onMutate}
               min="50"
               max="75000000"
-              required
             />
             {formData.type === "rent" && (
               <p className="formPriceText">$ / Month</p>
@@ -412,7 +393,6 @@ function EditListing() {
                 min="50"
                 max="75000000"
                 onChange={onMutate}
-                required={formData.offer}
               />
             </>
           )}
@@ -428,8 +408,8 @@ function EditListing() {
             accept=".jpg, .png, .jpeg"
             onChange={onMutate}
             multiple
-            required
           />
+
           <button type="submit" className="primaryButton createListingButton">
             Edit Listing
           </button>

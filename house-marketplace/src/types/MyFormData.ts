@@ -23,7 +23,7 @@ export interface MyFormData {
 export const createDefaultFormData = (): MyFormData => ({
   id: "",
   name: "",
-  address: "",
+  address: "911 Hillside Dr, Kodiak, Alaska 99615, USA",
   type: "rent",
   bedrooms: 1,
   bathrooms: 1,

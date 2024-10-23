@@ -58,9 +58,11 @@ function ListingItem({ listing, id, onDelete, onEdit }: ListingItemProps) {
           </div>
         </Link>
         {onDelete && (
-          <div className="removeIcon" onClick={() => onDelete(listing.id)}>
-            <DeleteIcon />
-          </div>
+          <Link to={`/profile`} className="categoryListingLink">
+            <div className="removeIcon" onClick={() => onDelete(listing.id)}>
+              <DeleteIcon />
+            </div>
+          </Link>
         )}
         {onEdit && (
           <div

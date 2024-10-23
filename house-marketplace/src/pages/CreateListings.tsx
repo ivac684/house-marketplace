@@ -8,7 +8,7 @@ import {
 } from "firebase/storage";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
@@ -85,32 +85,27 @@ function CreateListings() {
       }
     }
 
-    const storeImage = async (image: File) => {
-      return new Promise((resolve, reject) => {
-        const storage = getStorage();
-        const fileName = `${auth.currentUser?.uid}-${image.name}-${uuidv4()}`;
-        const storageRef = ref(storage, "images/" + fileName);
-        const uploadTask = uploadBytesResumable(storageRef, image);
+    const storeImage = async (image: File): Promise<string> => {
+      const storage = getStorage();
+      const fileName = `${auth.currentUser?.uid}-${image.name}-${uuidv4()}`;
+      const storageRef = ref(storage, `images/${fileName}`);
 
+      const uploadTask = uploadBytesResumable(storageRef, image);
+
+      return new Promise((resolve, reject) => {
         uploadTask.on(
           "state_changed",
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            switch (snapshot.state) {
-              case "paused":
-                break;
-              case "running":
-                break;
-            }
-          },
+          null,
           (error) => {
             reject(error);
           },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               resolve(downloadURL);
-            });
+            } catch (error) {
+              reject(error);
+            }
           }
         );
       });
@@ -127,7 +122,6 @@ function CreateListings() {
     const {
       id: string,
       imgUrls: File,
-      address,
       ...formDataCopy
     } = {
       ...formData,
@@ -143,7 +137,6 @@ function CreateListings() {
 
     setLoading(false);
     toast.success("Listing saved :)");
-    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
   };
 
   const onMutate = (
