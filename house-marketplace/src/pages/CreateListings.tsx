@@ -8,7 +8,7 @@ import {
 } from "firebase/storage";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
@@ -20,7 +20,7 @@ interface Geolocation {
 }
 
 function CreateListings() {
-  const [geolocationEnabled, setGeolocationEnabled] = useState(true);
+  const [geolocationEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<MyFormData>(createDefaultFormData());
 
@@ -130,7 +130,7 @@ function CreateListings() {
       timestamp: serverTimestamp(),
     };
     console.log(formData, formDataCopy);
-    const docRef = await addDoc(collection(db, "listings"), {
+    addDoc(collection(db, "listings"), {
       ...formDataCopy,
       imgUrls,
     });

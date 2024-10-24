@@ -47,7 +47,7 @@ function Listing() {
   return (
     <main>
       <Swiper slidesPerView={1} pagination={{ clickable: true }}>
-        {listing!.imgUrls.map((url, index) => (
+        {listing!.imgUrls.map((_, index) => (
           <SwiperSlide key={index}>
             <div
               style={{

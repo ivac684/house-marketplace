@@ -20,9 +20,9 @@ interface Geolocation {
 }
 
 function EditListing() {
-  const [geolocationEnabled, setGeolocationEnabled] = useState(true);
+  const [geolocationEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [listing, setListing] = useState<MyFormData | null>(null);
+  const [, setListing] = useState<MyFormData | null>(null);
   const [formData, setFormData] = useState<MyFormData>(createDefaultFormData());
 
   const auth = getAuth();

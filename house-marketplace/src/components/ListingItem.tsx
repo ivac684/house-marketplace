@@ -21,7 +21,9 @@ function ListingItem({ listing, id, onDelete, onEdit }: ListingItemProps) {
           className="categoryListingLink"
         >
           <img
-            src={listing.imgUrls?.[0]}
+            src={
+              typeof listing.imgUrls?.[0] === "string" ? listing.imgUrls[0] : ""
+            }
             alt={listing.name}
             className="categoryListingImg"
           ></img>
